@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Model Inference - GPU.ai</title>
+    <link rel="stylesheet" href="./css/font.css">
+        <link rel="stylesheet" href="./css/style.css">
+        <link rel="icon" type="image/x-icon" href="images/title_icon.png">
+    <script>
+        (function(win) {
+            var tid;
+
+            function refreshRem() {
+                let designSize = 1920; // 设计图尺寸
+                let html = document.documentElement;
+                let wW = html.clientWidth; // 窗口宽度
+                let rem = wW * 100 / designSize;
+
+                document.documentElement.style.fontSize = rem + 'px';
+            }
+
+            win.addEventListener('pageshow', function(e) {
+                if (e.persisted) {
+                    clearTimeout(tid);
+                    tid = setTimeout(refreshRem, 300);
+                }
+            }, false);
+            refreshRem();
+        })(window);
+    </script>
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            font-family: Eudoxus Sans;
+        }
+        header{
+            width: 100%;
+            height: 1.08rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.2rem;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 2;
+            left: 0;
+        }
+        header .logo{
+            display: flex;
+        }
+        header .logo img{
+            height: .6rem;
+            width: auto;
+        }
+        header .nav{
+            display: flex;
+            height: 100%;
+            align-items: center;
+        }
+        header .nav>ul{
+            display: flex;
+            height: 100%;
+        }
+        header .nav>ul>li{
+            list-style: none;
+            margin-right: .6rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        header .nav>ul>li>a{
+            color: #000;
+            font-family: Eudoxus Sans;
+            font-size: .24rem;
+            font-style: normal;
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            width: 1.6rem;
+            height: 0.5rem;
+            justify-content: center;
+            transition-duration: .3s;
+        }
+        header .nav>ul>li>a img{
+            width: .15rem;
+            margin-left: .1rem;
+            transition-duration: .3s;
+        }
+        header .nav>ul>li ul{
+            position: absolute;
+            border: 1px solid #132DCE;
+            top: 100%;
+            left: 0%;
+            padding: .1rem;
+            border-radius: 5px;
+            display: none;
+            transition-duration: .3s;
+        }
+        header .nav>ul>li ul li{
+            list-style: none;
+        }
+        header .nav>ul>li ul li a{
+            color: #000;
+            white-space: nowrap;
+            font-family: Eudoxus Sans;
+            font-size: .24rem;
+            font-style: normal;
+            line-height: 2;
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        header .nav>ul>li:hover ul{
+            display: block;
+        }
+        header .nav>ul>li:hover>a {
+            border: 1px solid #132DCE;
+            border-radius: 5px;
+        }
+        header .nav>ul>li:hover>a img{
+            transform: rotate(-180deg);
+        }
+        header .nav>a{
+            width: 2.26rem;
+            height: .6rem;
+            border-radius: .15rem;
+            // background: var(--Button---Black, radial-gradient(57.1% 100% at 50% 99%, #2B3990 0%, rgba(43, 57, 144, 0.83) 100%));
+            background-color: #A67DB8;
+            // box-shadow: 0px 6px 28.1px 0px rgba(9, 9, 9, 0.30);
+            outline: none;
+            border: none;
+            color: #FFF;
+            text-decoration: none;
+            font-family: Eudoxus Sans;
+            font-size: .24rem;
+            font-style: normal;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        header .nav>a img{
+            margin-left: .1rem;
+            width: .17rem;
+            height: auto;
+        }
+
+        footer{
+            width: 100%;
+            background: #0F1535;
+            box-sizing: border-box;
+            padding: 1rem 1.28rem;
+        }
+        footer .content{
+            display: flex;
+            width: 100%;
+        }
+        footer .content .left{
+            width: 50%;
+        }
+        footer .content .left img{
+            width: 2.2rem;
+            display: block;
+        }
+        footer .content .left p{
+            color: rgba(255, 255, 255, 0.90);
+            font-family: Eudoxus Sans;
+            font-size: .24rem;
+            font-style: normal;
+            font-weight: 300;
+            line-height: normal;
+            width: 5.47rem;
+            margin-top: .12rem;
+        }
+        footer .content .right{
+            width: 50%;
+            padding-left: .2rem;
+            box-sizing: border-box;
+            display: flex;
+            padding-top: .3rem;
+        }
+        footer .content .right .main{
+            width: 6.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        footer .content .right .item h2{
+            color: #FFF;
+            font-family: Eudoxus Sans;
+            font-size: .24rem;
+            font-style: normal;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        footer .content .right .item a{
+            margin-top: .2rem;
+            text-decoration: none;
+            color: #FFF;
+            font-family: Eudoxus Sans;
+            font-size: .18rem;
+            font-style: normal;
+            display: block;
+            font-weight: 400;
+            text-transform: capitalize;
+        }
+        footer .content .right .item p{
+            color: #FFF;
+            font-family: Eudoxus Sans;
+            font-size: .18rem;
+            font-style: normal;
+            font-weight: 400;
+            line-height: .30rem; /* 171.667% */
+            width: 2.5rem;
+        }
+    </style>
+</head>
+<body>
+<header style="background:white;box-shadow: 0px 1px 10px 0px rgba(9, 9, 9, 0.30);">
+    <a href="index.html" class="logo">
+        <img src="./images/logo.png">
+    </a>
+    <div class="nav">
+        <ul>
+            <li>
+                <a href="JavaScript:;">
+                    Products
+                    <img src="./images/arrow.svg">
+                </a>
+                <ul  style="background:white">
+                    <li><a href="gpu.html">GPU Compute</a></li>
+                    <li><a href="model.html">Model Inference</a></li>
+                </ul>
+            </li>
+        </ul>
+        <a href="contact.html" style="border-radius: 20px;">
+            <b>Deploy Now</b>
+        </a>
+    </div>
+</header>
+
+<div style="margin-top:90px;  display : flex; align-items : center;">
+    <div style="width:55%;display:inline-block" >
+    <img style="width:40%;margin-left:30%" src="./images/im222.png" >
+    </div>
+    <div style="width:43%;display:inline-block;">
+        <div style="font-size:35px"><b>Model Inference</b></div>
+        <div style="font-size:20px;margin-top:25px">Deploy your models using docker, k8s, or restful APIs. <br><a href="https://calendly.com/support-xyy/30min" target=”_blank" style="color:RoyalBlue">Talk to</a> our engineer to find the best solution for you.</div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="content">
+        <div class="left">
+            <img src="./images/flogo.png">
+            <p style="width:80%">GPU.ai provides unparalleled access to GPUs for deep learning at massive scale, high-speed and adaptable infrastructure</p>
+        </div>
+        <div class="right">
+            <div class="main">
+                <div class="item">
+                    <h2>LINKS</h2>
+                    <a href="gpu.html">GPU Compute</a>
+                    <a href="model.html">Model Inference</a>
+                    <a href="contact.html">Contact</a>
+                </div>
+                <div class="item">
+                    <h2>Get In Touch</h2>
+                    <p>hello@bitsync.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
