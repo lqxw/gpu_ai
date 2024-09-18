@@ -1,1 +1,0 @@
-       <div style="color:grey;font-size:15px;margin-top:20px"> * We offer 7 days free trial with no contract needed.</div>
