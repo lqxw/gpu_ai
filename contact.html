@@ -417,7 +417,7 @@
                 text = text + "GPU Number: "+gpu_number+"%0D%0A\n";
              }
              
-             text = text + message + "%0D%0A\n";
+             text = text + "%0D%0A\n" + message + "%0D%0A\n";
              document.location.href = ("mailto:hello@gpu.ai?subject=GPU Server Inquire&body="+text);
          }
       </script>
