@@ -763,7 +763,7 @@ a{text-decoration: none}
     border: 1px solid #A67DB8;
     margin-bottom: 0.3rem;
     overflow: hidden;
-    padding: 0.1rem 0.2rem;
+    padding: 0.1rem 0.1rem;
     box-sizing: border-box;
 }
 .contact_box .form .input input{

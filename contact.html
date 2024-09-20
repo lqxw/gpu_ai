@@ -391,7 +391,6 @@
       </header>
       <script>
          var text =""
-         var backupText =""
          function mailToAddress() {
              var name = document.getElementById("name").value;
              if (name == null || name == "") {
@@ -466,7 +465,7 @@
             </div>
             <div class="input-group">
                <div class="input-row">
-                  <textarea class="message_area" placeholder="message *" id="message" name="message" ></textarea>
+                  <textarea class="message_area" placeholder="Message" id="message" name="message" ></textarea>
                </div>
             </div>
             <button onclick="mailToAddress()" style="cursor:pointer;">Send</button>
