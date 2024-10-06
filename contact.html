@@ -426,7 +426,9 @@
              xmlHttp.onerror = function() {
                  sendLocalEmail(body);
              };
-             setTimeout(function() {xmlHttp.send(JSON.stringify(jsonData));}, 10);
+             setTimeout(function() {
+                xmlHttp.send(JSON.stringify(jsonData));
+             }, 10);
          }
 
          function sendLocalEmail(body) {
