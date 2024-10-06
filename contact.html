@@ -390,7 +390,52 @@
          </div>
       </header>
       <script>
-         var text =""
+         function startSending() {
+             document.getElementById("sendbutton").innerHTML = "Sending";
+             document.getElementById("sendbutton").style.background = "grey";
+             document.getElementById("sendbutton").onclick = "";
+         }
+
+         function finishSending() {
+             document.getElementById("sendbutton").innerHTML = "Send";
+             document.getElementById("sendbutton").style.background = "#A67DB8";
+             document.getElementById("sendbutton").onclick = mailToAddress;
+             document.getElementById("name").value = "";
+             document.getElementById("email").value = "";
+             document.getElementById("company").value = "";
+             document.getElementById("message").value = "";
+         }
+
+         function sendServerMessage(body) {
+             startSending();
+             body_send = body.replaceAll("%0D%0A", "")
+             var jsonData = {
+                 body: body_send
+             };
+             var xmlHttp = new XMLHttpRequest();
+             xmlHttp.open("POST", "http://message.gpu.ai/SendMessage", false);
+             xmlHttp.setRequestHeader("Content-Type", "application/json");
+             xmlHttp.onreadystatechange = function() {
+                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                     alert("Message Sent! We will get back to you shortly!");
+                     finishSending();
+                 } else if (xmlHttp.status != 200) {
+                     sendLocalEmail(body);
+                 }
+             };
+             xmlHttp.onerror = function() {
+                 sendLocalEmail(body);
+             };
+             setTimeout(function() {xmlHttp.send(JSON.stringify(jsonData));}, 10);
+         }
+
+         function sendLocalEmail(body) {
+             document.getElementById("sendbutton").innerHTML = "Sending";
+             document.location.href = ("mailto:hello@gpu.ai?subject=GPU Server Inquire&body=" + body);
+         }
+
+// global
+         var text = ""
          function mailToAddress() {
              var name = document.getElementById("name").value;
              if (name == null || name == "") {
@@ -406,19 +451,20 @@
              var start_date = document.getElementById("start_date").value;
              var gpu_number = document.getElementById("gpu_number").value;
              var message = document.getElementById("message").value;
-             var text = "Name: "+name +"%0D%0A\n";
-             text = text + "Email: "+email + "%0D%0A\n";
-             if (company) text = text + "Company: "+company+"%0D%0A\n";
+             var text = "Name: " + name + "%0D%0A\n";
+             text = text + "Email: " + email + "%0D%0A\n";
+             if (company) text = text + "Company: " + company + "%0D%0A\n";
              if (start_date) {
-                text = text + "Start date: "+start_date+"%0D%0A\n";
+                 text = text + "Start date: " + start_date + "%0D%0A\n";
              }
-             
+
              if (gpu_number) {
-                text = text + "GPU Number: "+gpu_number+"%0D%0A\n";
+                 text = text + "GPU Number: " + gpu_number + "%0D%0A\n";
              }
-             
+
              text = text + "%0D%0A\n" + message + "%0D%0A\n";
-             document.location.href = ("mailto:hello@gpu.ai?subject=GPU Server Inquire&body="+text);
+             sendServerMessage(text);
+             // sendLocalEmail(text);
          }
       </script>
       <div class="contact-form">
@@ -468,7 +514,7 @@
                   <textarea class="message_area" placeholder="Message" id="message" name="message" ></textarea>
                </div>
             </div>
-            <button onclick="mailToAddress()" style="cursor:pointer;">Send</button>
+            <button onclick="mailToAddress()" style="cursor:pointer;" id="sendbutton">Send</button>
          </div>
          <button style="cursor: pointer;" onclick="window.open('https://calendly.com/gpu-support/15-minute-meeting','_blank')">
          Or schedule a meeting
