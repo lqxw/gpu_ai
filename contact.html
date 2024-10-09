@@ -413,7 +413,7 @@
                  body: body_send
              };
              var xmlHttp = new XMLHttpRequest();
-             xmlHttp.open("POST", "http://message.gpu.ai/SendMessage", false);
+             xmlHttp.open("POST", "https://message.gpu.ai/SendMessage", false);
              xmlHttp.setRequestHeader("Content-Type", "application/json");
              xmlHttp.onreadystatechange = function() {
                  if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
@@ -465,8 +465,8 @@
              }
 
              text = text + "%0D%0A\n" + message + "%0D%0A\n";
-             // sendServerMessage(text);
-             sendLocalEmail(text);
+             sendServerMessage(text);
+             // sendLocalEmail(text);
          }
       </script>
       <div class="contact-form">
