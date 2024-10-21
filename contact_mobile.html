@@ -74,7 +74,7 @@
                   </select>
                </div>
                <textarea class="textarea" placeholder="Message" id="message"></textarea>
-               <button type="button" onclick="mailToAddress()" class="submit">Send</button>
+               <button type="button" onclick="mailToAddress()" class="submit" id="sendbutton">Send</button>
             </div>
          </div>
       </div>
@@ -95,37 +95,84 @@
          </div>
       </div>
    </body>
-   <script>
-      var text =""
-      function mailToAddress() {
-          var name = document.getElementById("name").value;
-          if (name == null || name == "") {
-              alert("Please fill name");
-              return;
-          }
-          var email = document.getElementById("email").value;
-          if (email == null || email == "") {
-              alert("Please fill email");
-              return;
-          }
-          var company = document.getElementById("company").value;
-          var start_date = document.getElementById("start_date").value;
-          var gpu_number = document.getElementById("gpu_number").value;
-          var message = document.getElementById("message").value;
-          var text = "Name: "+name +"%0D%0A\n";
-          text = text + "Email: "+email + "%0D%0A\n";
-          if (company) text = text + "Company: "+company+"%0D%0A\n";
-          if (start_date) {
-             text = text + "Start date: "+start_date+"%0D%0A\n";
-          }
-          
-          if (gpu_number) {
-             text = text + "GPU Number: "+gpu_number+"%0D%0A\n";
-          }
-          
-          text = text + "%0D%0A\n" + message + "%0D%0A\n";
-          document.location.href = ("mailto:hello@gpu.ai?subject=GPU Server Inquire&body="+text);
-      }
-      
-   </script>
+      <script>
+         function startSending() {
+             document.getElementById("sendbutton").innerHTML = "Sending";
+             document.getElementById("sendbutton").style.background = "grey";
+             document.getElementById("sendbutton").onclick = "";
+         }
+
+         function finishSending() {
+             document.getElementById("sendbutton").innerHTML = "Send";
+             document.getElementById("sendbutton").style.background = "#A67DB8";
+             document.getElementById("sendbutton").onclick = mailToAddress;
+             document.getElementById("name").value = "";
+             document.getElementById("email").value = "";
+             document.getElementById("company").value = "";
+             document.getElementById("message").value = "";
+         }
+
+         function sendServerMessage(body) {
+             startSending();
+             body_send = body.replaceAll("%0D%0A", "")
+             var jsonData = {
+                 body: body_send
+             };
+             var xmlHttp = new XMLHttpRequest();
+             xmlHttp.open("POST", "https://message.gpu.ai/SendMessage", false);
+             xmlHttp.setRequestHeader("Content-Type", "application/json");
+             xmlHttp.onreadystatechange = function() {
+                 if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                     alert("Message Sent! We will get back to you shortly!");
+                     finishSending();
+                 } else if (xmlHttp.status != 200) {
+                     sendLocalEmail(body);
+                 }
+             };
+             xmlHttp.onerror = function() {
+                 sendLocalEmail(body);
+             };
+             setTimeout(function() {
+                xmlHttp.send(JSON.stringify(jsonData));
+             }, 10);
+         }
+
+         function sendLocalEmail(body) {
+             document.getElementById("sendbutton").innerHTML = "Sending";
+             document.location.href = ("mailto:hello@gpu.ai?subject=GPU Server Inquire&body=" + body);
+         }
+
+// global
+         var text = ""
+         function mailToAddress() {
+             var name = document.getElementById("name").value;
+             if (name == null || name == "") {
+                 alert("Please fill name");
+                 return;
+             }
+             var email = document.getElementById("email").value;
+             if (email == null || email == "") {
+                 alert("Please fill email");
+                 return;
+             }
+             var company = document.getElementById("company").value;
+             var start_date = document.getElementById("start_date").value;
+             var gpu_number = document.getElementById("gpu_number").value;
+             var message = document.getElementById("message").value;
+             var text = "Name: " + name + "%0D%0A\n";
+             text = text + "Email: " + email + "%0D%0A\n";
+             if (company) text = text + "Company: " + company + "%0D%0A\n";
+             if (start_date) {
+                 text = text + "Start date: " + start_date + "%0D%0A\n";
+             }
+
+             if (gpu_number) {
+                 text = text + "GPU Number: " + gpu_number + "%0D%0A\n";
+             }
+
+             text = text + "%0D%0A\n" + message + "%0D%0A\n";
+             sendServerMessage(text);
+             // sendLocalEmail(text);
+         }
+      </script>
 </html>
