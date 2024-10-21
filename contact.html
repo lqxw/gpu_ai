@@ -427,7 +427,11 @@
                  sendLocalEmail(body);
              };
              setTimeout(function() {
-                xmlHttp.send(JSON.stringify(jsonData));
+                try {
+                    xmlHttp.send(JSON.stringify(jsonData));
+                } catch(exception) {
+                    sendLocalEmail(body);
+                }
              }, 10);
          }
 
